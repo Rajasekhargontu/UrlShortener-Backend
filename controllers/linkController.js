@@ -11,9 +11,14 @@ export async function shorten(req, res) {
         if (errors.isEmpty()===false)
             return res.status(500).json({status:"error", errors: errors.array(), message: "Invalid Input" });
         var { url, custom, expires_in } = req.body;
-        if(!url.startsWith('http://') && !url.startsWith('https://')){
-             url='http://'+url;
-        }
+        if (url.startsWith('http://')) {
+             url = url.replace('http://', 'https://');
+        } 
+    // 2. If the URL does not start with https:// (and it wasn't http://, 
+    //    meaning it has no protocol), prepend https://
+    else if (!url.startsWith('https://')) {
+        url = 'https://' + url;
+    }
         //console.log(url);
         var expires_at = null;
         if (expires_in) {
